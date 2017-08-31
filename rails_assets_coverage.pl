@@ -45,7 +45,7 @@ my $assets_extensions = {
   stylesheets => [qw(.css .scss)],
 };
 
-my $template_hash = prepare_template_refs($assets_extensions);
+my $template_hash = prepare_extensions_refs($assets_extensions);
 my ($assets_hash, $assets_paths, $reversed_ext) =
    prepare_assets_refs($assets_directories, $assets_extensions);
 
@@ -106,7 +106,7 @@ sub prepare_assets_refs {
   return ($assets, $assets_path, $reversed_ext);
 }
 
-sub prepare_template_refs {
+sub prepare_extensions_refs {
   my ($extensions) = @_;
   my @extensions_keys = sort keys %$extensions;
   my ($assets);
@@ -120,7 +120,7 @@ sub format_asset_elem {
   $asset_name =~ s/$_// foreach (@$assets_paths);
   return {
     name => $asset_name,
-    full_path => $_,
+    full_path => $asset_file,
     ext => $ext,
   };
 }
@@ -133,8 +133,48 @@ sub format_template_elem {
   }
 }
 
+sub format_scss_elem {
+  my ($asset_name, $ext, $referral) = @_;
+  return {
+    name => $asset_name,
+    referral => $referral,
+    ext => $ext,
+  };
+}
+
+# ----
+
 $process_template_file->($_) foreach @{find_files($template_directories)};
 $process_asset_file->($_) foreach @{find_files($assets_directories)};
+
+
+my $scss_files = [grep { $_->{ext} eq '.scss' } @{$assets_hash->{stylesheets}}];
+my $scss_hash = prepare_extensions_refs($assets_extensions);
+
+my $process_scss_file = sub {
+  my $file_name = $_;
+  if (-f $file_name) {
+    open FILE, $_;
+    while (my $line=<FILE>){
+      my @assets_tags = $line =~ /asset\-url\s*\(*\s*['"](.+?)['"]\s*\)*/;
+      foreach my $asset (@assets_tags){
+        my $clean_name = $asset;
+        $clean_name =~ s/\?.*//;
+        my ($ext) =  $clean_name =~ /(\.[a-zA-Z0-9]+)$/;
+        my $type = $reversed_ext->{$ext} || 'unknown';
+        if ($type ne 'unknown'){
+          my $elem = format_scss_elem($clean_name, $ext, $file_name);
+          push @{$scss_hash->{$type}}, $elem;
+        } else {
+          say "Found unknown type: $ext ($_)";
+        }
+      };
+    }
+  }
+};
+
+say "Processing scss files:";
+$process_scss_file->($_) foreach map {$_->{full_path}} @{$scss_files};
 
 foreach my $key (sort keys %$assets_hash) {
   say "My $key files are: " . scalar @{$assets_hash->{$key}};
@@ -144,5 +184,9 @@ foreach my $key (sort keys %$assets_hash) {
   say "My $key references are:" . scalar @{$template_hash->{$key}};
   foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$template_hash->{$key}}){
     say "- $_->{name} ($_->{full_path})";
+  };
+  say "My $key .scss references are:" . scalar @{$scss_hash->{$key}};
+  foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$scss_hash->{$key}}){
+    say "- $_->{name} ($_->{referral})";
   };
 }
