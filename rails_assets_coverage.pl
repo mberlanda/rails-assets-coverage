@@ -14,8 +14,10 @@ Rails Assets Coverage
 The purpose of this script is to find which assets are used by a Rails app.
 I tried to not use any dependency in order to make it runnable on every UNIX
 machine. This should be intended as a proof of concept for a future ruby gem.
-Copy this file inside your rails app root and run
-  perl assets_coverage.pl
+
+Usage
+
+  perl assets_coverage.pl [RAILS_ROOT|.]
 
 =head1 SUBROUTINES
 
@@ -29,6 +31,10 @@ This anonymous subroutine contains all the operation made on asset files
 This anonymous subroutine contains all the operation made on template files
 
 =cut
+
+my $rails_root = shift // '.';
+say "Processing $rails_root...";
+chdir $rails_root or die "Channot chdir to $rails_root: $!";
 
 my $template_directories = [qw( app/views/)];
 my $template_extensions = [qw(.haml .erb)];
