@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use 5.014;
 
+my $VERBOSE = $ENV{VERBOSE} // 0;
+my $OUTPUT = $ENV{OUTPUT} // 0;
+
+if ($OUTPUT) {
+  use lib "$ENV{PWD}/lib";
+  use YAML::Dumper;
+}
+
 =head1 NAME
 
 Rails Assets Coverage
@@ -16,23 +24,29 @@ machine. This should be intended as a proof of concept for a future ruby gem.
 
 Usage
 
-  perl assets_coverage.pl [RAILS_ROOT|.]
+  $ [VERBOSE=1|OUTPUT=1|] perl assets_coverage.pl [RAILS_ROOT|.]
+
+If you enable VERBOSE option, this would print on the result of the parsing.
+If you enable OUTPUT option, this would generate an output.yml report inside
+your rails root. Please note that the OUTPUT option requires two packages from
+cpanm:
+
+  $ sudo [apt|brew] install cpanminus
+  $ sudo cpanm -i YAML::Dumper
+
+In case you don't want to install cpanminus, it would still work for now since
+I copied the source of YAML v1.23 under the lib/ subfolder
 
 =head1 SUBROUTINES
 
-=head2 prepare_assets_refs
-This returns all the global data structures needed by the script
+=head2 prepare_assets_refs, prepare_extensions_refs
+These subroutines return global data structures needed by the script
 
-=head2 process_asset_file
-This anonymous subroutine contains all the operation made on asset files
-
-=head2 process_template_file
-This anonymous subroutine contains all the operation made on template files
+=head2 process_asset_file, process_template_file, process_scss_file
+These anonymous subroutines contains all the operation made on the file list
 
 =cut
 
-my $VERBOSE = $ENV{VERBOSE} // 0;
-my $OUTPUT = $ENV{OUTPUT} // 0;
 
 my $rails_root = shift // '.';
 say "Processing $rails_root..." if $VERBOSE;
@@ -214,11 +228,8 @@ foreach my $key (sort keys %$assets_hash) {
 }
 
 if ($OUTPUT){
-
-  use Data::Dumper;
-  use YAML;
-
+  my $dumper = YAML::Dumper->new();
   open OUT, '>output.yml';
-  print OUT Dump($output);
+  print OUT $dumper->dump($output);
   close OUT;
 }
