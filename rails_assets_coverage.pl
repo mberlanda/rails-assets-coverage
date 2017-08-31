@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use 5.014;
-use experimental qw(smartmatch switch);
 
 =head1 NAME
 
@@ -40,7 +39,7 @@ my $template_directories = [qw( app/views/)];
 my $template_extensions = [qw(.haml .erb)];
 my $assets_directories = [qw( app/assets/ public/ vendor/assets/ )];
 my $assets_extensions = {
-  fonts => [qw(.woff2 .woff .ttf .eot)],
+  fonts => [qw(.woff2 .woff .ttf .eot .otf)],
   images => [qw(.png .jpg .gif .svg .ico)],
   javascripts => [qw(.js)],
   stylesheets => [qw(.css .scss)],
@@ -72,20 +71,13 @@ my $process_template_file = sub {
 
       open FILE, $_;
       while (my $line=<FILE>){
-        given($line){
-          when(/stylesheet_link_tag\s*\(*\s*['"](.+?)['"]\s*\)*/){
-            my $elem = format_template_elem($file_name, $1);
-            push @{$template_hash->{stylesheets}}, $elem;
-          }
-          when(/javascript_include_tag\s*\(*\s*['"](.+)['"]\s*\)*/){
-            my $elem = format_template_elem($file_name, $1);
-            push @{$template_hash->{javascripts}}, $elem;
-          }
-          when(/asset_path\s*\(*\s*['"](.+?)['"]\s*\)*/){
-            my $elem = format_template_elem($file_name, $1);
-            push @{$template_hash->{images}}, $elem;
-          }
-        }
+        my @stylesheet_tags = $line =~ /stylesheet_link_tag\s*\(*\s*['"](.+?)['"]\s*\)*/;
+        my @javascript_tags = $line =~ /javascript_include_tag\s*\(*\s*['"](.+)['"]\s*\)*/;
+        my @image_tags = $line =~ /asset_path\s*\(*\s*['"](.+?)['"]\s*\)*/;
+
+        push @{$template_hash->{stylesheets}}, $_ foreach (map {format_template_elem($file_name, $_)} @stylesheet_tags);
+        push @{$template_hash->{javascripts}}, $_ foreach (map {format_template_elem($file_name, $_)} @javascript_tags);
+        push @{$template_hash->{images}}, $_ foreach (map {format_template_elem($file_name, $_)} @image_tags);
       }
     }
   }
