@@ -31,8 +31,11 @@ This anonymous subroutine contains all the operation made on template files
 
 =cut
 
+my $VERBOSE = $ENV{VERBOSE} // 0;
+my $OUTPUT = $ENV{OUTPUT} // 0;
+
 my $rails_root = shift // '.';
-say "Processing $rails_root...";
+say "Processing $rails_root..." if $VERBOSE;
 chdir $rails_root or die "Channot chdir to $rails_root: $!";
 
 my $template_directories = [qw( app/views/)];
@@ -58,7 +61,7 @@ my $process_asset_file = sub {
       my $elem = format_asset_elem($_, $ext, $assets_paths);
       push @{$assets_hash->{$type}}, $elem;
     } else {
-      say "Found unknown type: $ext ($_)";
+      say "Found unknown type: $ext ($_)" if $VERBOSE;
     }
   }
 };
@@ -71,9 +74,9 @@ my $process_template_file = sub {
 
       open FILE, $_;
       while (my $line=<FILE>){
-        my @stylesheet_tags = $line =~ /stylesheet_link_tag\s*\(*\s*['"](.+?)['"]\s*\)*/;
-        my @javascript_tags = $line =~ /javascript_include_tag\s*\(*\s*['"](.+)['"]\s*\)*/;
-        my @image_tags = $line =~ /asset_path\s*\(*\s*['"](.+?)['"]\s*\)*/;
+        my @stylesheet_tags = $line =~ /stylesheet_link_tag\s*\(*\s*['"](.+?)['"]\s*\)*/g;
+        my @javascript_tags = $line =~ /javascript_include_tag\s*\(*\s*['"](.+)['"]\s*\)*/g;
+        my @image_tags = $line =~ /asset_path\s*\(*\s*['"](.+?)['"]\s*\)*/g;
 
         push @{$template_hash->{stylesheets}}, $_ foreach (map {format_template_elem($file_name, $_)} @stylesheet_tags);
         push @{$template_hash->{javascripts}}, $_ foreach (map {format_template_elem($file_name, $_)} @javascript_tags);
@@ -148,45 +151,74 @@ $process_template_file->($_) foreach @{find_files($template_directories)};
 $process_asset_file->($_) foreach @{find_files($assets_directories)};
 
 
-my $scss_files = [grep { $_->{ext} eq '.scss' } @{$assets_hash->{stylesheets}}];
 my $scss_hash = prepare_extensions_refs($assets_extensions);
+my $scss_files = [grep { $_->{ext} eq '.scss' } @{$assets_hash->{stylesheets}}];
 
 my $process_scss_file = sub {
   my $file_name = $_;
   if (-f $file_name) {
     open FILE, $_;
     while (my $line=<FILE>){
-      my @assets_tags = $line =~ /asset\-url\s*\(*\s*['"](.+?)['"]\s*\)*/;
+      my @assets_tags = $line =~ /asset\-url\s*\(*\s*['"](.+?)['"]\s*\)*/g;
       foreach my $asset (@assets_tags){
         my $clean_name = $asset;
-        $clean_name =~ s/\?.*//;
+        $clean_name =~ s/([\?#].*)//;
         my ($ext) =  $clean_name =~ /(\.[a-zA-Z0-9]+)$/;
         my $type = $reversed_ext->{$ext} || 'unknown';
         if ($type ne 'unknown'){
           my $elem = format_scss_elem($clean_name, $ext, $file_name);
           push @{$scss_hash->{$type}}, $elem;
         } else {
-          say "Found unknown type: $ext ($_)";
+          say "Found unknown type: $ext ($_)" if $VERBOSE;
         }
       };
     }
   }
 };
 
-say "Processing scss files:";
 $process_scss_file->($_) foreach map {$_->{full_path}} @{$scss_files};
 
+if ($VERBOSE) {
+  foreach my $key (sort keys %$assets_hash) {
+    say "My $key files are: " . scalar @{$assets_hash->{$key}};
+    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets_hash->{$key}}){
+      say "- $_->{name} ($_->{full_path})";
+    };
+    say "My $key references are:" . scalar @{$template_hash->{$key}};
+    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$template_hash->{$key}}){
+      say "- $_->{name} ($_->{full_path})";
+    };
+    say "My $key .scss references are:" . scalar @{$scss_hash->{$key}};
+    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$scss_hash->{$key}}){
+      say "- $_->{name} ($_->{referral})";
+    };
+  }
+}
+
+my $output = prepare_extensions_refs($assets_extensions);;
+
 foreach my $key (sort keys %$assets_hash) {
-  say "My $key files are: " . scalar @{$assets_hash->{$key}};
-  foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets_hash->{$key}}){
-    say "- $_->{name} ($_->{full_path})";
+  foreach my $elem (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets_hash->{$key}}){
+    $elem->{referrals} = [()];
+    push  @{$elem->{referrals}}, $_->{full_path} foreach (
+      grep {
+        my $check = $_->{name};
+        $check =~ s/#\{.*\}/\.\*/;
+        $elem->{name} =~ m/$check/;
+      } @{$template_hash->{$key}}
+    );
+    push  @{$elem->{referrals}}, $_->{referral} foreach (grep { $elem->{name} =~ $_->{name} } @{$scss_hash->{$key}});
+    $elem->{refs_count} = scalar @{$elem->{referrals}};
+    push @{$output->{$key}}, $elem;
   };
-  say "My $key references are:" . scalar @{$template_hash->{$key}};
-  foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$template_hash->{$key}}){
-    say "- $_->{name} ($_->{full_path})";
-  };
-  say "My $key .scss references are:" . scalar @{$scss_hash->{$key}};
-  foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$scss_hash->{$key}}){
-    say "- $_->{name} ($_->{referral})";
-  };
+}
+
+if ($OUTPUT){
+
+  use Data::Dumper;
+  use YAML;
+
+  open OUT, '>output.yml';
+  print OUT Dump($output);
+  close OUT;
 }
