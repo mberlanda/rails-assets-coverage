@@ -15,8 +15,10 @@ This should be intended as a proof of concept for a future ruby gem:
 
 Please note that the OUTPUT option would require one package from cpanm:
 
+```
   $ sudo [apt|brew] install cpanminus
   $ sudo cpanm -i YAML::Dumper
+```
 
 In case you don't want to install cpanminus, it would still work for now since I copied the source of [YAML v1.23](http://search.cpan.org/dist/YAML/lib/YAML/Dumper.pod) under the [lib/](lib/) subfolder.
 
