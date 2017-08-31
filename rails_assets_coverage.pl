@@ -42,11 +42,10 @@ I copied the source of YAML v1.23 under the lib/ subfolder
 =head2 prepare_assets_refs, prepare_extensions_refs
 These subroutines return global data structures needed by the script
 
-=head2 process_asset_file, process_template_file, process_scss_file
+=head2 process_asset_file, process_template_file, format_referral_elem
 These anonymous subroutines contains all the operation made on the file list
 
 =cut
-
 
 my $rails_root = shift // '.';
 say "Processing $rails_root..." if $VERBOSE;
@@ -58,7 +57,7 @@ my $assets_directories = [qw( app/assets/ public/ vendor/assets/ )];
 my $assets_extensions = {
   fonts => [qw(.woff2 .woff .ttf .eot .otf)],
   images => [qw(.png .jpg .gif .svg .ico)],
-  javascripts => [qw(.js)],
+  javascripts => [qw(.js .map)],
   stylesheets => [qw(.css .scss)],
 };
 
@@ -150,7 +149,7 @@ sub format_template_elem {
   }
 }
 
-sub format_scss_elem {
+sub format_referral_elem {
   my ($asset_name, $ext, $referral) = @_;
   return {
     name => $asset_name,
@@ -180,7 +179,7 @@ my $process_scss_file = sub {
         my ($ext) =  $clean_name =~ /(\.[a-zA-Z0-9]+)$/;
         my $type = $reversed_ext->{$ext} || 'unknown';
         if ($type ne 'unknown'){
-          my $elem = format_scss_elem($clean_name, $ext, $file_name);
+          my $elem = format_referral_elem($clean_name, $ext, $file_name);
           push @{$scss_hash->{$type}}, $elem;
         } else {
           say "Found unknown type: $ext ($_)" if $VERBOSE;
@@ -189,8 +188,33 @@ my $process_scss_file = sub {
     }
   }
 };
-
 $process_scss_file->($_) foreach map {$_->{full_path}} @{$scss_files};
+
+my $map_hash = prepare_extensions_refs($assets_extensions);
+my $js_files = [grep { $_->{ext} eq '.js' } @{$assets_hash->{javascripts}}];
+
+my $process_map_file = sub {
+  my $file_name = $_;
+  if (-f $file_name) {
+    open FILE, $_;
+    while (my $line=<FILE>){
+      my @assets_tags = $line =~ /sourceMappingURL=(.+\.map)/;
+      foreach my $asset (@assets_tags){
+        my $clean_name = $asset;
+        $clean_name =~ s/([\?#].*)//;
+        my ($ext) =  $clean_name =~ /(\.[a-zA-Z0-9]+)$/;
+        my $type = $reversed_ext->{$ext} || 'unknown';
+        if ($type ne 'unknown'){
+          my $elem = format_referral_elem($clean_name, $ext, $file_name);
+          push @{$map_hash->{$type}}, $elem;
+        } else {
+          say "Found unknown type: $ext ($_)" if $VERBOSE;
+        }
+      };
+    }
+  }
+};
+$process_map_file->($_) foreach map {$_->{full_path}} @{$js_files};
 
 if ($VERBOSE) {
   foreach my $key (sort keys %$assets_hash) {
@@ -206,11 +230,14 @@ if ($VERBOSE) {
     foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$scss_hash->{$key}}){
       say "- $_->{name} ($_->{referral})";
     };
+    say "My $key .js references are:" . scalar @{$map_hash->{$key}};
+    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$map_hash->{$key}}){
+      say "- $_->{name} ($_->{referral})";
+    };
   }
 }
 
-my $output = prepare_extensions_refs($assets_extensions);;
-
+my $output = prepare_extensions_refs($assets_extensions);
 foreach my $key (sort keys %$assets_hash) {
   foreach my $elem (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets_hash->{$key}}){
     $elem->{referrals} = [()];
