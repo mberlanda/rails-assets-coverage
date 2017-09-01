@@ -1,0 +1,11 @@
+# Avoid configuration metadata file
+MYMETA.*
+
+# Avoid Module::Build generated and utility files.
+_build/
+blib/
+./Build
+./Build.bat
+./Build.COM
+./BUILD.COM
+./build.com
