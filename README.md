@@ -18,7 +18,7 @@ Otherwise
 
 Options:
 - `RAILS_ROOT` arg is the path to rails application you want to analyze.
-- with `VERBOSE` env var the script will print on STDOOUT the result of the parsing activity.
+- with `VERBOSE` env var the script will print on STDOUT the result of the parsing activity.
 - with `OUTPUT` env var the script will generate an assets_status.yml report inside your `RAILS_ROOT`.
 
 

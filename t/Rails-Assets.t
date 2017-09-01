@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 12;
+use Test::More tests => 14;
 use Test::Deep;
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);
@@ -15,6 +15,8 @@ diag( "Testing Rails::Assets $Rails::Assets::VERSION, Perl $], $^X" );
 # they have to be defined in Rails::Assets.pm
 ok( defined &Rails::Assets::format_extensions_list, 'format_extensions_list() is defined' );
 ok( defined &prepare_extensions_refs, 'prepare_extensions_refs() is defined' );
+ok( defined &prepare_assets_refs, 'prepare_assets_refs() is defined' );
+ok( defined &find_files, 'find_files() is defined' );
 
 my $assets_extensions = {
   fonts => [qw(.ttf)],

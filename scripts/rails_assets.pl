@@ -8,6 +8,7 @@ my $VERBOSE = $ENV{VERBOSE} // 0;
 my $OUTPUT = $ENV{OUTPUT} // 0;
 
 use Rails::Assets;
+use Rails::Assets::Formatter;
 
 if ($OUTPUT) {
   use YAML::Dumper;
@@ -64,34 +65,6 @@ my $process_template_file = sub {
     }
   }
 };
-
-sub format_asset_elem {
-  my ($asset_file, $ext, $assets_paths) = @_;
-  my $asset_name = $asset_file;
-  $asset_name =~ s/$_// foreach (@$assets_paths);
-  return {
-    name => $asset_name,
-    full_path => $asset_file,
-    ext => $ext,
-  };
-}
-
-sub format_template_elem {
-  my ($template_file, $asset_name) = @_;
-  return {
-    name => $asset_name,
-    full_path => $template_file,
-  }
-}
-
-sub format_referral_elem {
-  my ($asset_name, $ext, $referral) = @_;
-  return {
-    name => $asset_name,
-    referral => $referral,
-    ext => $ext,
-  };
-}
 
 # ----
 
