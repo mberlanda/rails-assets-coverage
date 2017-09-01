@@ -24,7 +24,7 @@ Options:
 
 ### Setup
 
-For a proper usage you should instal cpanminus and this module:
+For a proper usage you should install `cpanminus` and `Module::Builder` perl module:
 
 ```
   $ sudo [apt|brew] install cpanminus
