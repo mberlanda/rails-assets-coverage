@@ -254,9 +254,21 @@ foreach my $key (sort keys %$assets_hash) {
   };
 }
 
+my $assets_status = {
+  used => [()],
+  unused => [()],
+  broken_references => [()],
+};
+
+foreach my $key (sort keys %$assets_hash) {
+  push @{$assets_status->{used}}, $_ foreach (grep { $_->{refs_count} > 0 } @{$assets_hash->{$key}});
+  push @{$assets_status->{unused}}, $_ foreach (grep { $_->{refs_count} == 0 } @{$assets_hash->{$key}});
+}
+
+
 if ($OUTPUT){
   my $dumper = YAML::Dumper->new();
-  open OUT, '>output.yml';
-  print OUT $dumper->dump($output);
+  open OUT, '>assets_status.yml';
+  print OUT $dumper->dump($assets_status);
   close OUT;
 }
