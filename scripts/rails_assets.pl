@@ -65,12 +65,6 @@ my $process_template_file = sub {
   }
 };
 
-sub find_files {
-  my $dirs = shift;
-  my $find_cmd = "find " . join(" ", @$dirs);
-  return [ split /\n/, `$find_cmd` ];
-}
-
 sub format_asset_elem {
   my ($asset_file, $ext, $assets_paths) = @_;
   my $asset_name = $asset_file;
@@ -103,7 +97,6 @@ sub format_referral_elem {
 
 $process_template_file->($_) foreach @{find_files($template_directories)};
 $process_asset_file->($_) foreach @{find_files($assets_directories)};
-
 
 my $scss_hash = prepare_extensions_refs($assets_extensions);
 my $scss_files = [grep { $_->{ext} eq '.scss' } @{$assets_hash->{stylesheets}}];
@@ -205,7 +198,6 @@ foreach my $key (sort keys %$assets_hash) {
   push @{$assets_status->{used}}, $_ foreach (grep { $_->{refs_count} > 0 } @{$assets_hash->{$key}});
   push @{$assets_status->{unused}}, $_ foreach (grep { $_->{refs_count} == 0 } @{$assets_hash->{$key}});
 }
-
 
 if ($OUTPUT){
   my $dumper = YAML::Dumper->new();

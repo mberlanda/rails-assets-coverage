@@ -6,9 +6,17 @@ package Rails::Assets {
   our $VERSION = '0.01';
   use Exporter qw(import);
   our @EXPORT = qw(
+    find_files
     prepare_extensions_refs
     prepare_assets_refs
   );
+
+  sub find_files {
+    my $dirs = shift;
+    die "Invalid reference provided. Expected ARRAY of directories: $!" unless (scalar @{$dirs} > 0);
+    my $find_cmd = "find " . join(" ", @$dirs);
+    return [ grep {-f} split(/\n/, `$find_cmd`) ];
+  }
 
   sub prepare_extensions_refs {
     my ($extensions) = @_;
@@ -75,6 +83,8 @@ if you don't export anything, such as for a purely object-oriented module.
 =head2 prepare_assets_refs
 
 =head2 format_extensions_list
+
+=head2 find_files
 
 =head1 AUTHOR
 

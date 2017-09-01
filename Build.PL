@@ -16,6 +16,9 @@ my $builder = Module::Build->new(
         'Test::More' => '0',
         'Test::Output' => '0',
         'Test::Deep' => '0',
+        'File::Basename' => '0',
+        'File::Spec' => '0',
+        'File::Spec::Functions' => '0',
     },
     requires => {
         'YAML' => '0',
