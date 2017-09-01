@@ -6,21 +6,34 @@ This should be intended as a proof of concept for a future ruby gem:
 
 ### Usage
 
+
+If you don't have cpanminus installed:
 ```
-  $ [VERBOSE=1|OUTPUT=1|] perl assets_coverage.pl [RAILS_ROOT|.]
+  $ [VERBOSE=1|OUTPUT=1|] perl rails_assets_coverage.pl [RAILS_ROOT|.]
+```
+Otherwise
+```
+  $ [VERBOSE=1|OUTPUT=1|] perl -Ilib scripts/rails_assets.pl [RAILS_ROOT|.]
 ```
 
-- If you enable `VERBOSE` env var, the result of the parsing activity will be printed on STDOUT.
-- If you enable `OUTPUT` env var, this would generate an output.yml report inside your rails root.
+Options:
+- `RAILS_ROOT` arg is the path to rails application you want to analyze.
+- with `VERBOSE` env var the script will print on STDOOUT the result of the parsing activity.
+- with `OUTPUT` env var the script will generate an assets_status.yml report inside your `RAILS_ROOT`.
 
-Please note that the OUTPUT option would require one package from cpanm:
+
+### Setup
+
+For a proper usage you should instal cpanminus and this module:
 
 ```
   $ sudo [apt|brew] install cpanminus
-  $ sudo cpanm -i YAML::Dumper
+  $ sudo cpanm -i Module::Builder
+  $ perl Build.PL
+  $ ./Build installdeps
+  $ ./Build test
+  $ ./Build install
 ```
-
-In case you don't want to install cpanminus, it would still work for now since I copied the source of [YAML v1.23](http://search.cpan.org/dist/YAML/lib/YAML/Dumper.pod) under the [lib/](lib/) subfolder.
 
 ### Notes
 

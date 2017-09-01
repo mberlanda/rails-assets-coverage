@@ -1,5 +1,5 @@
 Revision history for Rails-Assets
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.01    2017-09-01/10:32
+        Created for version Rails::Assets including some utility functions.
 

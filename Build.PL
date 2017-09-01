@@ -15,8 +15,10 @@ my $builder = Module::Build->new(
     build_requires => {
         'Test::More' => '0',
         'Test::Output' => '0',
+        'Test::Deep' => '0',
     },
     requires => {
+        'YAML' => '0',
         'YAML::Dumper' => '0',
     },
     add_to_cleanup     => [ 'Rails-Assets-*' ],

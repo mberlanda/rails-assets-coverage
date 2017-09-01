@@ -4,6 +4,7 @@ MYMETA.*
 # Avoid Module::Build generated and utility files.
 _build/
 blib/
+cover_db/
 ./Build
 ./Build.bat
 ./Build.COM

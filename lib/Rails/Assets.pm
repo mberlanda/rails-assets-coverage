@@ -1,31 +1,66 @@
-package Rails::Assets;
+package Rails::Assets {
+  use 5.006;
+  use strict;
+  use warnings;
 
-use 5.006;
-use strict;
-use warnings;
+  our $VERSION = '0.01';
+  use Exporter qw(import);
+  our @EXPORT = qw(
+    prepare_extensions_refs
+    prepare_assets_refs
+  );
+
+  sub prepare_extensions_refs {
+    my ($extensions) = @_;
+    my $extensions_keys = format_extensions_list($extensions);
+    my ($assets);
+    $assets->{$_} = [()] foreach (@$extensions_keys);
+    return $assets;
+  }
+
+  sub prepare_assets_refs {
+    my ($dirs, $extensions) = @_;
+    my $extensions_keys = format_extensions_list($extensions);
+    my $assets = prepare_extensions_refs($extensions_keys);
+    my ($assets_path, $reversed_ext);
+    foreach my $d (@$dirs){
+      unless ($d =~ /public/) {
+        push @$assets_path, "$d$_/" foreach (qw(fonts javascripts stylesheets));
+      }
+      push @$assets_path, $d;
+    }
+    foreach my $key (@$extensions_keys){
+      $reversed_ext->{$_} = $key foreach (@{$extensions->{$key}});
+    }
+    return ($assets, $assets_path, $reversed_ext);
+  }
+
+  sub format_extensions_list {
+    my ($extensions) = @_;
+    return [(sort keys %$extensions)] if (ref($extensions) eq 'HASH');
+    return $extensions if(ref($extensions) eq 'ARRAY');
+    die "Invalid extension argument provided: $!";
+  }
+
+}
 
 =head1 NAME
 
-Rails::Assets - The great new Rails::Assets!
+Rails::Assets - provides some utilities functions for Assets detection in a Rails project.
 
 =head1 VERSION
 
 Version 0.01
 
-=cut
-
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+This module provide some utilities functions
 
     use Rails::Assets;
 
-    my $foo = Rails::Assets->new();
+    my $template_hash = prepare_extensions_refs($assets_extensions);
+    my ($assets_hash, $assets_paths, $reversed_ext) =
+      prepare_assets_refs($assets_directories, $assets_extensions);
     ...
 
 =head1 EXPORT
@@ -35,19 +70,11 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 prepare_extensions_refs
 
-=cut
+=head2 prepare_assets_refs
 
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
+=head2 format_extensions_list
 
 =head1 AUTHOR
 
@@ -59,15 +86,11 @@ Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
-
-
-
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Rails::Assets
-
 
 You can also look for information at:
 
@@ -91,9 +114,7 @@ L<http://search.cpan.org/dist/Rails-Assets/>
 
 =back
 
-
 =head1 ACKNOWLEDGEMENTS
-
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -134,7 +155,6 @@ YOUR LOCAL LAW. UNLESS REQUIRED BY LAW, NO COPYRIGHT HOLDER OR
 CONTRIBUTOR WILL BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, OR
 CONSEQUENTIAL DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THE PACKAGE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 
 =cut
 
