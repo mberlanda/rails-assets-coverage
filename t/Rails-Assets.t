@@ -83,6 +83,7 @@ my $assets_directories = [qw(app/assets/ public/ vendor/assets/)];
     app/assets/stylesheets/application.css
     public/favicon.ico
     public/images/null.png
+    vendor/assets/images/.keep
     vendor/assets/javascripts/bootstrap.min.js
     vendor/assets/javascripts/jquery.js
     vendor/assets/stylesheets/css/bootstrap.css

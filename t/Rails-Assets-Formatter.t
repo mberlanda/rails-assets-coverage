@@ -10,7 +10,7 @@ BEGIN {
 }
 diag( "Testing Rails::Assets::Formatter $Rails::Assets::Formatter::VERSION, Perl $], $^X" );
 
-# they have to be defined in Rails::Assets.pm
+# they have to be defined in Rails::Assets::Formatter.pm
 ok( defined &format_asset_elem, 'format_asset_elem() is defined' );
 ok( defined &format_referral_elem, 'format_referral_elem() is defined' );
 ok( defined &format_template_elem, 'format_template_elem() is defined' );
