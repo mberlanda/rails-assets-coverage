@@ -4,23 +4,22 @@ The purpose of this script is to find which assets are used by a Rails app.
 I tried to not use any dependency in order to make it runnable on every UNIX machine without installing perl package manager.
 This should be intended as a proof of concept for a future ruby gem:
 
-### Usage
-
+### Demo
 
 If you don't have cpanminus installed:
 ```
   $ [VERBOSE=1|OUTPUT=1|] perl rails_assets_coverage.pl [RAILS_ROOT|.]
 ```
-Otherwise
+
+### Usage
+
 ```
   $ [VERBOSE=1|OUTPUT=1|] perl -Ilib scripts/rails_assets.pl [RAILS_ROOT|.]
 ```
-
 Options:
 - `RAILS_ROOT` arg is the path to rails application you want to analyze.
 - with `VERBOSE` env var the script will print on STDOUT the result of the parsing activity.
 - with `OUTPUT` env var the script will generate an assets_status.yml report inside your `RAILS_ROOT`.
-
 
 ### Setup
 

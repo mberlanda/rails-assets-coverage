@@ -1,40 +1,60 @@
-package Rails::Assets {
+package Rails::Assets::Base {
   use 5.006;
   use strict;
   use warnings;
 
   our $VERSION = '0.01';
+  use Exporter qw(import);
+  our @EXPORT = qw(
+    find_files
+    prepare_extensions_refs
+    prepare_assets_refs
+  );
 
-  our $TEMPLATE_DIR = [qw( app/views/)];
-  our $TEMPLATE_EXT = [qw(.haml .erb)];
-  our $ASSETS_DIR = [qw( app/assets/ public/ vendor/assets/ )];
-  our $ASSETS_EXT = {
-    fonts => [qw(.woff2 .woff .ttf .eot .otf)],
-    images => [qw(.png .jpg .gif .svg .ico)],
-    javascripts => [qw(.js .map)],
-    stylesheets => [qw(.css .scss)],
-  };
-
-  sub new {
-    my $class = shift;
-    my $self = {
-      TEMPLATE_DIR => [@$Rails::Assets::TEMPLATE_DIR],
-      TEMPLATE_EXT => [@$Rails::Assets::TEMPLATE_EXT],
-      ASSETS_DIR => [@$Rails::Assets::ASSETS_DIR],
-      ASSETS_EXT => {%$Rails::Assets::ASSETS_EXT},
-    };
-    bless $self, $class;
+  sub find_files {
+    my $dirs = shift;
+    die "Invalid reference provided. Expected ARRAY of directories: $!" unless (scalar @{$dirs} > 0);
+    my $find_cmd = "find " . join(" ", @$dirs);
+    return [ grep {-f} split(/\n/, `$find_cmd`) ];
   }
 
-  sub template_dir { $_[0]->{TEMPLATE_DIR} }
-  sub template_ext { $_[0]->{TEMPLATE_EXT} }
-  sub assets_dir { $_[0]->{ASSETS_DIR} }
-  sub assets_ext { $_[0]->{ASSETS_EXT} }
+  sub prepare_extensions_refs {
+    my ($extensions) = @_;
+    my $extensions_keys = format_extensions_list($extensions);
+    my ($assets);
+    $assets->{$_} = [()] foreach (@$extensions_keys);
+    return $assets;
+  }
+
+  sub prepare_assets_refs {
+    my ($dirs, $extensions) = @_;
+    my $extensions_keys = format_extensions_list($extensions);
+    my $assets = prepare_extensions_refs($extensions_keys);
+    my ($assets_path, $reversed_ext);
+    foreach my $d (@$dirs){
+      unless ($d =~ /public/) {
+        push @$assets_path, "$d$_/" foreach (qw(fonts javascripts stylesheets));
+      }
+      push @$assets_path, $d;
+    }
+    foreach my $key (@$extensions_keys){
+      $reversed_ext->{$_} = $key foreach (@{$extensions->{$key}});
+    }
+    return ($assets, $assets_path, $reversed_ext);
+  }
+
+  sub format_extensions_list {
+    my ($extensions) = @_;
+    return [(sort keys %$extensions)] if (ref($extensions) eq 'HASH');
+    return $extensions if(ref($extensions) eq 'ARRAY');
+    die "Invalid extension argument provided: $!";
+  }
 
 }
+
 =head1 NAME
 
-Rails::Assets - provides some utilities functions for Assets detection in a Rails project.
+Rails::Assets::Base - provides some utilities functions for Assets detection in a Rails project.
 
 =head1 VERSION
 
@@ -42,33 +62,26 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-This module an object for parsing Assets directories
+This module provide some utilities functions
 
-    use Rails::Assets;
+    use Rails::Assets::Base;
 
-    my $assets = Rails::Assets->new();
-
-    my $template_directories = $assets->template_dir();
-    my $template_extensions = $assets->template_ext();
-    my $assets_directories = $assets->assets_dir();
-    my $assets_extensions = $assets->assets_ext();
+    my $template_hash = prepare_extensions_refs($assets_extensions);
+    my ($assets_hash, $assets_paths, $reversed_ext) =
+      prepare_assets_refs($assets_directories, $assets_extensions);
     ...
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head2 prepare_extensions_refs
+
+=head2 prepare_assets_refs
+
+=head2 find_files
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
-The constructor takes no argument for now. Later it would be interesting to add additional paths
-and extensions. This would require some validation and it might have some side effects
-
-=head2 template_dir
-=head2 template_ext
-=head2 assets_dir
-=head2 assets_ext
+=head2 format_extensions_list
 
 =head1 AUTHOR
 
@@ -76,15 +89,15 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-. at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=.>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Rails::Assets
+    perldoc Rails::Assets::Base
 
 You can also look for information at:
 
@@ -92,19 +105,19 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker (report bugs here)
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Rails-Assets>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=.>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Rails-Assets>
+L<http://annocpan.org/dist/.>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Rails-Assets>
+L<http://cpanratings.perl.org/d/.>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Rails-Assets/>
+L<http://search.cpan.org/dist/./>
 
 =back
 
@@ -152,4 +165,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1; # End of Rails::Assets
+1; # End of Rails::Assets::Base

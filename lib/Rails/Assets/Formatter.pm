@@ -51,7 +51,7 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-Perhaps a little code snippet.
+This module provide some utility functions for formatting data structures while parsing assets.
 
     use Rails::Assets::Formatter;
 

@@ -104,21 +104,21 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-Perhaps a little code snippet.
+This module contains some functions for processing data references.
 
     use Rails::Assets::Processor;
 
-    my $a = format_asset_elem($asset_file, $ext, $assets_paths);
-    my $b = format_referral_elem($asset_file, $ext, $referral);
-    my $c = format_template_elem($template_file, $asset_name);
+    process_template_file($_, $template_hash, $template_extensions) foreach @{find_files($template_directories)};
+    process_asset_file($_, $reversed_ext, $assets_hash, $assets_paths) foreach @{find_files($assets_directories)};
+
+    my $scss_files = [grep { $_->{ext} eq '.scss' } @{$assets_hash->{stylesheets}}];
+    my $js_files = [grep { $_->{ext} eq '.js' } @{$assets_hash->{javascripts}}];
+
+    process_scss_file($_, $reversed_ext, $scss_hash) foreach map {$_->{full_path}} @{$scss_files};
+    process_map_file($_, , $reversed_ext, $map_hash) foreach map {$_->{full_path}} @{$js_files};
     ...
 
 =head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
 
 =head2 process_asset_file
 
@@ -127,6 +127,8 @@ if you don't export anything, such as for a purely object-oriented module.
 =head2 process_scss_file
 
 =head2 process_map_file
+
+=head1 SUBROUTINES/METHODS
 
 =head1 AUTHOR
 

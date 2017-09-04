@@ -8,7 +8,7 @@ use Test::Output;
 
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(catdir);
-use Rails::Assets qw(
+use Rails::Assets::Base qw(
   find_files
   prepare_assets_refs
   prepare_extensions_refs

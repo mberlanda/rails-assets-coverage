@@ -2,6 +2,7 @@ Build.PL
 Changes
 lib/Rails/Assets.pm
 lib/Rails/Assets/Formatter.pm
+lib/Rails/Assets/Processor.pm
 lib/YAML.pm
 lib/YAML.pod
 lib/YAML/Any.pm
@@ -50,5 +51,6 @@ t/fixtures/vendor/assets/stylesheets/font-awesome/fonts/FontAwesome.otf
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
+t/Rails-Assets-Formatter.t
 t/Rails-Assets.t
 xt/boilerplate.t

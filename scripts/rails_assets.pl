@@ -8,7 +8,7 @@ my $VERBOSE = $ENV{VERBOSE} // 0;
 my $OUTPUT = $ENV{OUTPUT} // 0;
 
 use Rails::Assets;
-# use Rails::Assets::Formatter;
+use Rails::Assets::Base;
 use Rails::Assets::Processor;
 
 if ($OUTPUT) {
@@ -19,15 +19,12 @@ my $rails_root = shift // '.';
 say "Processing $rails_root..." if $VERBOSE;
 chdir $rails_root or die "Channot chdir to $rails_root: $!";
 
-my $template_directories = [qw( app/views/)];
-my $template_extensions = [qw(.haml .erb)];
-my $assets_directories = [qw( app/assets/ public/ vendor/assets/ )];
-my $assets_extensions = {
-  fonts => [qw(.woff2 .woff .ttf .eot .otf)],
-  images => [qw(.png .jpg .gif .svg .ico)],
-  javascripts => [qw(.js .map)],
-  stylesheets => [qw(.css .scss)],
-};
+my $assets = Rails::Assets->new();
+
+my $template_directories = $assets->template_dir();
+my $template_extensions = $assets->template_ext();
+my $assets_directories = $assets->assets_dir();
+my $assets_extensions = $assets->assets_ext();
 
 my ($assets_hash, $assets_paths, $reversed_ext) =
    prepare_assets_refs($assets_directories, $assets_extensions);

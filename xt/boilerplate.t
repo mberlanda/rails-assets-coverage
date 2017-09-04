@@ -2,7 +2,7 @@
 use 5.006;
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 sub not_in_file_ok {
     my ($filename, %regex) = @_;
@@ -49,7 +49,8 @@ TODO: {
   );
 
   module_boilerplate_ok('lib/Rails/Assets.pm');
+  module_boilerplate_ok('lib/Rails/Assets/Base.pm');
   module_boilerplate_ok('lib/Rails/Assets/Formatter.pm');
-
+  module_boilerplate_ok('lib/Rails/Assets/Processor.pm');
 }
 
