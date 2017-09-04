@@ -44,7 +44,7 @@ foreach my $key (sort keys %{$assets->assets_hash()}) {
 my $assets_status = {
   used => [()],
   unused => [()],
-  broken_references => [()],
+  dubious => [()],
 };
 
 foreach my $key (sort keys %{$assets->assets_hash()}) {
@@ -52,9 +52,29 @@ foreach my $key (sort keys %{$assets->assets_hash()}) {
   push @{$assets_status->{unused}}, $_ foreach (grep { $_->{refs_count} == 0 } @{$assets->assets_hash()->{$key}});
 }
 
+foreach my $key (sort keys %{$assets->template_hash()}) {
+  my @assets_paths_by_type = map {$_->{name}} @{$assets->assets_hash()->{$key}};
+  my $referrals = [uniq( flatten(map {$_->{referrals}} @{$assets->assets_hash()->{$key}}) )];
+  my %referred = map {($_, 1)} @$referrals;
+  foreach my $elem (grep { !$referred{$_->{name}} } @{$assets->template_hash()->{$key}}) {
+    my $check = $elem->{name};
+    $check =~ s/#\{.*\}/\.\*/;
+    my @matched = grep { $_ =~ /$check/ } @assets_paths_by_type;
+    push @{$assets_status->{dubious}}, $elem unless scalar @matched;
+  }
+}
+
 if ($OUTPUT){
   my $dumper = YAML::Dumper->new();
   open OUT, '>assets_status.yml';
   print OUT $dumper->dump($assets_status);
   close OUT;
+}
+
+sub uniq {
+  my %seen;
+  grep { !$seen{$_}++ } @_;
+}
+sub flatten {
+  return sort map {@$_} @_;
 }
