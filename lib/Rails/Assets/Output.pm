@@ -1,4 +1,4 @@
-package Rails::Assets::Formatter {
+package Rails::Assets::Output {
 
   use 5.006;
   use strict;
@@ -7,43 +7,36 @@ package Rails::Assets::Formatter {
   our $VERSION = '0.02';
   use Exporter qw(import);
   our @EXPORT = qw(
-    format_asset_elem
-    format_referral_elem
-    format_template_elem
+    tell_output
   );
 
-  sub format_asset_elem {
-    my ($asset_file, $ext, $assets_paths) = @_;
-    my $asset_name = $asset_file;
-    $asset_name =~ s/$_// foreach (@$assets_paths);
-    return {
-      name => $asset_name,
-      full_path => $asset_file,
-      ext => $ext,
-    };
-  }
-
-  sub format_referral_elem {
-    my ($asset_name, $ext, $referral) = @_;
-    return {
-      name => $asset_name,
-      referral => $referral,
-      ext => $ext,
-    };
-  }
-
-  sub format_template_elem {
-    my ($template_file, $asset_name) = @_;
-    return {
-      name => $asset_name,
-      full_path => $template_file,
+  sub tell_output {
+    my $assets = shift;
+    foreach my $key (sort keys %{$assets->assets_hash()}) {
+      print "My $key files are:" . scalar @{$assets->assets_hash()->{$key}} . "\n";
+      foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->assets_hash()->{$key}}){
+        print "- $_->{name} ($_->{full_path})" . "\n";
+      };
+      print "My $key references are:" . scalar @{$assets->template_hash()->{$key}} . "\n";
+      foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->template_hash()->{$key}}){
+        print "- $_->{name} ($_->{full_path})" . "\n";
+      };
+      print "My $key .scss references are:" . scalar @{$assets->scss_hash()->{$key}} . "\n";
+      foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->scss_hash()->{$key}}){
+        print "- $_->{name} ($_->{referral})" . "\n";
+      };
+      print "My $key .js references are:" . scalar @{$assets->map_hash()->{$key}} . "\n";
+      foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->map_hash()->{$key}}){
+        print "- $_->{name} ($_->{referral})" . "\n";
+      };
     }
   }
+
 }
 
 =head1 NAME
 
-Rails::Assets::Formatter - provide utility functions for formatting assets refs
+Rails::Assets::Output - Output functions for verbose and output mode
 
 =head1 VERSION
 
@@ -51,27 +44,19 @@ Version 0.02
 
 =head1 SYNOPSIS
 
-This module provide some utility functions for formatting data structures while parsing assets.
+    use Rails::Assets;
+    use Rails::Assets::Output;
 
-    use Rails::Assets::Formatter;
-
-    my $a = format_asset_elem($asset_file, $ext, $assets_paths);
-    my $b = format_referral_elem($asset_file, $ext, $referral);
-    my $c = format_template_elem($template_file, $asset_name);
+    my $assets = Rails::Assets->new();
+    $assets->analyse();
+    tell_output($assets);
     ...
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+=head2 tell_output
 
 =head1 SUBROUTINES/METHODS
-
-=head2 format_asset_elem
-
-=head2 format_referral_elem
-
-=head2 format_template_elem
 
 =head1 AUTHOR
 
@@ -87,7 +72,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Rails::Assets::Formatter
+    perldoc Rails::Assets::Output
 
 You can also look for information at:
 
@@ -155,4 +140,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =cut
 
-1; # End of Rails::Assets::Formatter
+1; # End of Rails::Assets::Output

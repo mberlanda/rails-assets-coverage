@@ -3,7 +3,7 @@ package Rails::Assets::Base {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   use Exporter qw(import);
   our @EXPORT = qw(
     find_files
@@ -58,7 +58,7 @@ Rails::Assets::Base - provides some utilities functions for Assets detection in 
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 

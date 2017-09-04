@@ -4,7 +4,7 @@ package Rails::Assets::Processor {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   use Exporter qw(import);
   our @EXPORT = qw(
@@ -100,7 +100,7 @@ Rails::Assets::Processor - provide utility functions for formatting assets refs
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 

@@ -72,7 +72,7 @@ Rails::Assets - provides some utilities functions for Assets detection in a Rail
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -86,6 +86,8 @@ This module an object for parsing Assets directories
     my $template_extensions = $assets->template_ext();
     my $assets_directories = $assets->assets_dir();
     my $assets_extensions = $assets->assets_ext();
+
+    $assets->analyse();
     ...
 
 =head1 EXPORT

@@ -8,7 +8,8 @@ my $VERBOSE = $ENV{VERBOSE} // 0;
 my $OUTPUT = $ENV{OUTPUT} // 0;
 
 use Rails::Assets;
-use Rails::Assets::Base;
+use Rails::Assets::Base qw(prepare_extensions_refs);
+use Rails::Assets::Output;
 
 if ($OUTPUT) {
   use YAML::Dumper;
@@ -21,26 +22,7 @@ chdir $rails_root or die "Channot chdir to $rails_root: $!";
 my $assets = Rails::Assets->new();
 $assets->analyse();
 
-if ($VERBOSE) {
-  foreach my $key (sort keys %{$assets->assets_hash()}) {
-    say "My $key files are: " . scalar @{$assets->assets_hash()->{$key}};
-    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->assets_hash()->{$key}}){
-      say "- $_->{name} ($_->{full_path})";
-    };
-    say "My $key references are:" . scalar @{$assets->template_hash()->{$key}};
-    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->template_hash()->{$key}}){
-      say "- $_->{name} ($_->{full_path})";
-    };
-    say "My $key .scss references are:" . scalar @{$assets->scss_hash()->{$key}};
-    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->scss_hash()->{$key}}){
-      say "- $_->{name} ($_->{referral})";
-    };
-    say "My $key .js references are:" . scalar @{$assets->map_hash()->{$key}};
-    foreach (sort { "\L$a->{name}" cmp "\L$b->{name}" } @{$assets->map_hash()->{$key}}){
-      say "- $_->{name} ($_->{referral})";
-    };
-  }
-}
+tell_output($assets) if ($VERBOSE);
 
 my $output = prepare_extensions_refs($assets->assets_ext());
 foreach my $key (sort keys %{$assets->assets_hash()}) {
