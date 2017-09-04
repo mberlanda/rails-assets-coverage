@@ -21,6 +21,7 @@ my $builder = Module::Build->new(
         'File::Spec::Functions' => '0',
     },
     requires => {
+        'Clone' => '0',
         'YAML' => '0',
         'YAML::Dumper' => '0',
     },

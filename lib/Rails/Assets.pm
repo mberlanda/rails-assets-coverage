@@ -3,8 +3,11 @@ package Rails::Assets {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  use Rails::Assets::Base;
+  use Rails::Assets::Processor;
+  use Clone qw(clone);
 
+  our $VERSION = '0.02';
   our $TEMPLATE_DIR = [qw( app/views/)];
   our $TEMPLATE_EXT = [qw(.haml .erb)];
   our $ASSETS_DIR = [qw( app/assets/ public/ vendor/assets/ )];
@@ -30,6 +33,37 @@ package Rails::Assets {
   sub template_ext { $_[0]->{TEMPLATE_EXT} }
   sub assets_dir { $_[0]->{ASSETS_DIR} }
   sub assets_ext { $_[0]->{ASSETS_EXT} }
+  sub assets_hash { $_[0]->{ASSETS_HASH} }
+  sub template_hash { $_[0]->{TEMPLATE_HASH} }
+  sub scss_hash { $_[0]->{SCSS_HASH} }
+  sub map_hash { $_[0]->{MAP_HASH} }
+  sub assets_paths { $_[0]->{ASSETS_PATHS} }
+  sub reversed_ext { $_[0]->{REVERSED_EXT} }
+
+  sub analyse {
+    my $self = shift;
+    my ($assets_hash, $assets_paths, $reversed_ext) =
+      prepare_assets_refs($self->assets_dir, $self->assets_ext);
+
+    $self->{ASSETS_HASH} = clone($assets_hash);
+    $self->{TEMPLATE_HASH} = clone($assets_hash);
+    $self->{SCSS_HASH} = clone($assets_hash);
+    $self->{MAP_HASH} = clone($assets_hash);
+    $self->{ASSETS_PATHS} = $assets_paths;
+    $self->{REVERSED_EXT} = {%$reversed_ext};
+
+    process_asset_file($_, $self->{REVERSED_EXT}, $self->{ASSETS_HASH}, $self->{ASSETS_PATHS})
+      foreach @{find_files($self->assets_dir())};
+    process_template_file($_, $self->{TEMPLATE_HASH}, $self->template_ext())
+      foreach @{find_files($self->template_dir())};
+
+    my $scss_files = [grep { $_->{ext} eq '.scss' } @{$self->{ASSETS_HASH}->{stylesheets}}];
+    my $js_files = [grep { $_->{ext} eq '.js' } @{$self->{ASSETS_HASH}->{javascripts}}];
+
+    process_scss_file($_, $self->{REVERSED_EXT}, $self->{SCSS_HASH}) foreach map {$_->{full_path}} @{$scss_files};
+    process_map_file($_, , $self->{REVERSED_EXT}, $self->{MAP_HASH}) foreach map {$_->{full_path}} @{$js_files};
+    $self;
+  }
 
 }
 =head1 NAME
@@ -69,6 +103,13 @@ and extensions. This would require some validation and it might have some side e
 =head2 template_ext
 =head2 assets_dir
 =head2 assets_ext
+=head2 assets_hash
+=head2 template_hash
+=head2 scss_hash
+=head2 map_hash
+=head2 assets_paths
+=head2 reversed_ext
+=head2 analyse
 
 =head1 AUTHOR
 
