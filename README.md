@@ -11,6 +11,11 @@ If you don't have cpanminus installed and you want to run some demos, please ref
 ```
   # Ubuntu
   $ [VERBOSE=1|OUTPUT=1|] demo/rails_assets_ubuntu [RAILS_ROOT|.]
+  # Windows: cmd prompt
+  set VERBOSE=1
+  echo %VERBOSE% # if you want to check
+  set VERBOSE= #unset the variable with no spaces after = sign
+  demo/rails_assets_win.exe [RAILS_ROOT]
 ```
 
 ### Usage
@@ -54,6 +59,13 @@ Compile a demo:
   Build test
   Build testcover
   Build install
+```
+
+Compile a demo:
+```
+  cpanm PAR::Packer # it takes a while ...
+  Build install
+  pp --verbose -o demo/rails_assets_win.exe scripts/rails_assets.pl
 ```
 
 ### Notes
