@@ -4,15 +4,13 @@ The purpose of this script is to find which assets are used by a Rails app.
 I tried to not use any dependency in order to make it runnable on every UNIX machine without installing perl package manager.
 This should be intended as a proof of concept for a future ruby gem:
 
-### Demo
+### Demos
 
-If you don't have cpanminus installed and you are on Ubuntu 16.04 LTS:
+If you don't have cpanminus installed and you want to run some demos, please refer to the `demos` branch.
+
 ```
-  $ [VERBOSE=1|OUTPUT=1|] ./demo/rails_assets_ubuntu [RAILS_ROOT|.]
-```
-Else you can try:
-```
-  $ [VERBOSE=1|OUTPUT=1|] perl rails_assets_coverage.pl [RAILS_ROOT|.]
+  # Ubuntu
+  $ [VERBOSE=1|OUTPUT=1|] demo/rails_assets_ubuntu [RAILS_ROOT|.]
 ```
 
 ### Usage
@@ -27,15 +25,34 @@ Options:
 
 ### Setup
 
+#### UNIX
+
 For a proper usage you should install `cpanminus` and `Module::Builder` perl module:
 
 ```
-  $ sudo [apt|brew] install cpanminus
+  $ sudo apt install cpanminus
   $ sudo cpanm -i Module::Builder
   $ perl Build.PL
   $ ./Build installdeps
   $ ./Build test
   $ ./Build install
+```
+
+Compile a demo:
+```
+  $ pp -o demo/rails_assets_ubuntu scripts/rails_assets.pl
+```
+
+#### Windows
+
+- Download [Strawberry Perl](http://strawberryperl.com/)
+- Open the perl command line and go to the directory where you cloned/downloaded this repo
+
+```
+  perl Build.PL
+  Build installdeps
+  Build test
+  Build install
 ```
 
 ### Notes
