@@ -46,12 +46,13 @@ Compile a demo:
 #### Windows
 
 - Download [Strawberry Perl](http://strawberryperl.com/)
-- Open the perl command line and go to the directory where you cloned/downloaded this repo
+- Open the perl command line *as administrato* and go to the directory where you cloned/downloaded this repo
 
 ```
   perl Build.PL
   Build installdeps
   Build test
+  Build testcover
   Build install
 ```
 

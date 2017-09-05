@@ -18,7 +18,7 @@ package Rails::Assets::Base {
     my @found;
     my $wanted = sub { push @found, $File::Find::name if -f };
     find({ wanted => $wanted, no_chdir=> 1}, @$dirs);
-    return \@found;
+    return [sort {"\L$a" cmp "\L$b"} @found];
   }
 
   sub prepare_extensions_refs {
