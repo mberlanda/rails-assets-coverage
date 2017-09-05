@@ -2,6 +2,7 @@ package Rails::Assets::Base {
   use 5.006;
   use strict;
   use warnings;
+  use File::Find;
 
   our $VERSION = '0.02';
   use Exporter qw(import);
@@ -14,8 +15,10 @@ package Rails::Assets::Base {
   sub find_files {
     my $dirs = shift;
     die "Invalid reference provided. Expected ARRAY of directories: $!" unless (scalar @{$dirs} > 0);
-    my $find_cmd = "find " . join(" ", @$dirs);
-    return [ grep {-f} split(/\n/, `$find_cmd`) ];
+    my @found;
+    my $wanted = sub { push @found, $File::Find::name if -f };
+    find({ wanted => $wanted, no_chdir=> 1}, @$dirs);
+    return \@found;
   }
 
   sub prepare_extensions_refs {

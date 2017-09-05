@@ -19,6 +19,7 @@ my $builder = Module::Build->new(
         'File::Basename' => '0',
         'File::Spec' => '0',
         'File::Spec::Functions' => '0',
+        'File::Find' => '0',
     },
     requires => {
         'Clone' => '0',
