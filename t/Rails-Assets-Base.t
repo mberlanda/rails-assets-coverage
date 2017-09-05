@@ -88,12 +88,12 @@ my $assets_directories = [qw(app/assets/ public/ vendor/assets/)];
     vendor/assets/javascripts/jquery.js
     vendor/assets/stylesheets/css/bootstrap.css
     vendor/assets/stylesheets/font-awesome/css/font-awesome.css.scss
-    vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.ttf
     vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.eot
-    vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.woff
     vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.svg
-    vendor/assets/stylesheets/font-awesome/fonts/FontAwesome.otf
+    vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.ttf
+    vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.woff
     vendor/assets/stylesheets/font-awesome/fonts/fontawesome-webfont.woff2
+    vendor/assets/stylesheets/font-awesome/fonts/FontAwesome.otf
   )];
 
   my $actual_files = find_files($assets_directories);

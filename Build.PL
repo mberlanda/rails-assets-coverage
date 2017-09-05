@@ -20,6 +20,7 @@ my $builder = Module::Build->new(
         'File::Spec' => '0',
         'File::Spec::Functions' => '0',
         'File::Find' => '0',
+        'Devel::Cover' => '0',
     },
     requires => {
         'Clone' => '0',
