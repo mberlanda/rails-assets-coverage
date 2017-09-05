@@ -6,7 +6,11 @@ This should be intended as a proof of concept for a future ruby gem:
 
 ### Demo
 
-If you don't have cpanminus installed:
+If you don't have cpanminus installed and you are on Ubuntu 16.04 LTS:
+```
+  $ [VERBOSE=1|OUTPUT=1|] ./demo/rails_assets_ubuntu [RAILS_ROOT|.]
+```
+Else you can try:
 ```
   $ [VERBOSE=1|OUTPUT=1|] perl rails_assets_coverage.pl [RAILS_ROOT|.]
 ```
