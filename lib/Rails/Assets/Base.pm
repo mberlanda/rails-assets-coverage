@@ -4,7 +4,7 @@ package Rails::Assets::Base {
   use warnings;
   use File::Find;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.01';
   use Exporter qw(import);
   our @EXPORT = qw(
     find_files

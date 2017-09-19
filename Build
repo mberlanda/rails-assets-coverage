@@ -1,4 +1,4 @@
-#!perl
+#! /usr/bin/perl
 
 use strict;
 use Cwd;
@@ -6,12 +6,12 @@ use File::Basename;
 use File::Spec;
 
 sub magic_number_matches {
-  return 0 unless -e '_build\\magicnum';
+  return 0 unless -e '_build/magicnum';
   my $FH;
-  open $FH, '<','_build\\magicnum' or return 0;
+  open $FH, '<','_build/magicnum' or return 0;
   my $filenum = <$FH>;
   close $FH;
-  return $filenum == 36395;
+  return $filenum == 152909;
 }
 
 my $progname;
@@ -20,7 +20,7 @@ BEGIN {
   $^W = 1;  # Use warnings
   $progname = basename($0);
   $orig_dir = Cwd::cwd();
-  my $base_dir = 'C:\\Users\\kupta\\DOCUME~1\\RAILS-~1';
+  my $base_dir = '/home/kupta/personal/ccabea23498d32f27f4591eb4d78a4be';
   if (!magic_number_matches()) {
     unless (chdir($base_dir)) {
       die ("Couldn't chdir($base_dir), aborting\n");
@@ -33,6 +33,9 @@ BEGIN {
     (
 
     );
+    if ($INC[-1] ne '.') {
+        push @INC, '.';
+    }
 
 }
 

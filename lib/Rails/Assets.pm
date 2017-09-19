@@ -7,7 +7,7 @@ package Rails::Assets {
   use Rails::Assets::Processor;
   use Clone qw(clone);
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.01';
   our $TEMPLATE_DIR = [qw( app/views/)];
   our $TEMPLATE_EXT = [qw(.haml .erb)];
   our $ASSETS_DIR = [qw( app/assets/ public/ vendor/assets/ )];

@@ -4,7 +4,7 @@ package Rails::Assets::Processor {
   use strict;
   use warnings;
 
-  our $VERSION = '0.02';
+  our $VERSION = '0.01';
 
   use Exporter qw(import);
   our @EXPORT = qw(
