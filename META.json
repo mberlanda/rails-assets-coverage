@@ -1,5 +1,5 @@
 {
-   "abstract" : "provides some utilities functions for Assets detection in a Rails project.",
+   "abstract" : "Class for Rails Projects Assets Analysis.",
    "author" : [
       "Mauro Berlanda <kupta@cpan.org>"
    ],
@@ -42,23 +42,23 @@
    "provides" : {
       "Rails::Assets" : {
          "file" : "lib/Rails/Assets.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "Rails::Assets::Base" : {
          "file" : "lib/Rails/Assets/Base.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "Rails::Assets::Formatter" : {
          "file" : "lib/Rails/Assets/Formatter.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "Rails::Assets::Output" : {
          "file" : "lib/Rails/Assets/Output.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "Rails::Assets::Processor" : {
          "file" : "lib/Rails/Assets/Processor.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       }
    },
    "release_status" : "stable",
@@ -67,6 +67,6 @@
          "http://www.perlfoundation.org/artistic_license_2_0"
       ]
    },
-   "version" : "0.01",
+   "version" : "0.02",
    "x_serialization_backend" : "JSON::PP version 2.94"
 }
