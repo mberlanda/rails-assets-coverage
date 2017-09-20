@@ -189,7 +189,7 @@ see L<assets_hash|"#assets_hash">
 
 =head2 assets_paths
 
-C<undef> by default. Array reference containing C<$Rails::Assets::ASSETS_DIR> and their and their subfolders named as assets_hash keys
+C<undef> by default. Array reference containing C<$Rails::Assets::ASSETS_DIR> and their subfolders named as assets_hash keys
 
     my $expected_paths = [qw(
       app/assets/fonts/ app/assets/javascripts/ app/assets/stylesheets/ app/assets/ public/
@@ -199,7 +199,7 @@ C<undef> by default. Array reference containing C<$Rails::Assets::ASSETS_DIR> an
 
 =head2 reversed_ext
 
-C<undef> by default.  Hash reference created reversing key value of C<assets_hash>
+C<undef> by default. Hash reference created reversing key value of C<$assets_hash>
 
     is_deeply(
       [sort keys %{$assets->reversed_ext()}],
@@ -220,7 +220,7 @@ Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
 
-You can even open pull requests and issues on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage>
+Pull Requests, Issues, Stars and Forks on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage> are welcome!
 
 =head1 SUPPORT
 

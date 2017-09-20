@@ -4,7 +4,7 @@ package Rails::Assets::Base {
   use warnings;
   use File::Find;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   use Exporter qw(import);
   our @EXPORT = qw(
     find_files
@@ -57,7 +57,7 @@ package Rails::Assets::Base {
 
 =head1 NAME
 
-Rails::Assets::Base - provides some utilities functions for Assets detection in a Rails project.
+Rails::Assets::Base - Files Finder and Custom Data Structures for Rails::Assets.
 
 =head1 VERSION
 
@@ -78,13 +78,62 @@ This module provide some utilities functions
 
 =head2 prepare_extensions_refs
 
+Uses L<format_extensions_list|"#format_extensions_list"> to find the assets types and returns the following data structure:
+
+    my $expected_extensions_refs = {
+      fonts => [()],
+      images => [()],
+      javascripts => [()],
+      stylesheets => [()],
+    };
+
 =head2 prepare_assets_refs
 
+Returns C<($assets, $assets_path, $reversed_ext)> where :
+
+=over 3
+
+=item * C<$assets> is an Hash reference as L<prepare_extensions_refs|"#prepare_extensions_refs">
+
+=item * C<$assets_path> is Array reference containing C<$Rails::Assets::ASSETS_DIR> and their subfolders named as C<$assets> keys
+
+=item * C<$reversed_ext> is an Hash reference created reversing key value of C<$assets>
+
+=back
+
 =head2 find_files
+
+Takes an array reference of directories as argument and returns a sorted list of files for all subfolder
 
 =head1 SUBROUTINES/METHODS
 
 =head2 format_extensions_list
+
+This subroutine takes as argument an C<$assets_extensions> reference and returns an array reference of assets types
+
+    my $assets_extensions = {
+      fonts => [qw(.ttf)],
+      images => [qw(.png)],
+      javascripts => [qw(.js)],
+      stylesheets => [qw(.css)],
+    };
+
+    my $assets_ext = [qw(fonts images javascripts stylesheets)];
+    is_deeply(
+      Rails::Assets::Base::format_extensions_list($assets_extensions),
+      $assets_ext, 'format_extensions_list() works with an HASH reference'
+    );
+    is_deeply(
+      Rails::Assets::Base::format_extensions_list($assets_ext),
+      $assets_ext, 'format_extensions_list() works with an ARRAY reference'
+    );
+
+    my $invalid_ref = sub { return 1 };
+    eval { Rails::Assets::Base::format_extensions_list($invalid_ref) } or my $at = $@;
+    like(
+      $at, qr/Invalid extension argument provided/,
+      'format_extensions_list() dies with a message when invalid reference provided'
+    );
 
 =head1 AUTHOR
 
@@ -92,9 +141,11 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-. at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=.>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+Pull Requests, Issues, Stars and Forks on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage> are welcome!
 
 =head1 SUPPORT
 
