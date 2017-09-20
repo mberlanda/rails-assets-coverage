@@ -4,7 +4,7 @@ package Rails::Assets::Formatter {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   use Exporter qw(import);
   our @EXPORT = qw(
     format_asset_elem
@@ -43,7 +43,7 @@ package Rails::Assets::Formatter {
 
 =head1 NAME
 
-Rails::Assets::Formatter - provide utility functions for formatting assets refs
+Rails::Assets::Formatter - Formatting Functions for Rails::Assets.
 
 =head1 VERSION
 
@@ -62,16 +62,48 @@ This module provide some utility functions for formatting data structures while 
 
 =head1 EXPORT
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
 =head2 format_asset_elem
+
+Takes C<($asset_file, $ext, $assets_paths)> as arguments where :
+
+=over 3
+
+=item * C<$asset_file> is the file name (scalar)
+
+=item * C<$ext> is the file extension (scalar)
+
+=item * C<$assets_paths> is Array reference containing C<$Rails::Assets::ASSETS_DIR> and their subfolders named as C<$assets> keys
+
+=back
+
+Returns the following data structure:
+
+    my $output = {
+      name => $asset_name,
+      full_path => $asset_file,
+      ext => $ext,
+    };
 
 =head2 format_referral_elem
 
+Takes three strings C<($asset_file, $ext, $referral)> as arguments and returns the following data structure:
+
+    my $output = {
+      name => $asset_name,
+      referral => $referral,
+      ext => $ext,
+    };
+
 =head2 format_template_elem
+
+Takes two strings C<($template_file, $asset_name)> as arguments and returns the following data structure:
+
+    my $output = {
+      name => $asset_name,
+      full_path => $template_file,
+    };
+
+=head1 SUBROUTINES/METHODS
 
 =head1 AUTHOR
 
@@ -79,9 +111,11 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-. at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=.>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+Pull Requests, Issues, Stars and Forks on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage> are welcome!
 
 =head1 SUPPORT
 
