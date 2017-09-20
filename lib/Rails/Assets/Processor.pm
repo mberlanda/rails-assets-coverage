@@ -4,7 +4,7 @@ package Rails::Assets::Processor {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
 
   use Exporter qw(import);
   our @EXPORT = qw(
@@ -96,7 +96,7 @@ package Rails::Assets::Processor {
 
 =head1 NAME
 
-Rails::Assets::Processor - provide utility functions for formatting assets refs
+Rails::Assets::Processor - Processing Functions for Rails::Assets
 
 =head1 VERSION
 
@@ -122,11 +122,20 @@ This module contains some functions for processing data references.
 
 =head2 process_asset_file
 
+This function find the file extension, assign a file type based on C<$reversed_ext> and pushed a formatted element into C<<< @{$assets_hash->{$type}} >>>
+
 =head2 process_template_file
+
+This function parse template files, extract the references to assets, find the file extension, assign a file type based on C<$reversed_ext> and pushed a formatted element into C<<< @{$template_hash->{$type}} >>>
 
 =head2 process_scss_file
 
+This function parse scss files, extract the references to assets, find the file extension, assign a file type based on C<$reversed_ext> and pushed a formatted element into C<<< @{$scss_hash->{$type}} >>>
+
 =head2 process_map_file
+
+This function parse javascript files, extract the references to .js.map files, assign a file type based on C<$reversed_ext> and pushed a formatted element into C<<< @{$map_hash->{$type}} >>>
+
 
 =head1 SUBROUTINES/METHODS
 
@@ -136,9 +145,12 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-. at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=.>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+Pull Requests, Issues, Stars and Forks on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage> are welcome!
+
 
 =head1 SUPPORT
 
