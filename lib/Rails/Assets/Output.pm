@@ -4,7 +4,7 @@ package Rails::Assets::Output {
   use strict;
   use warnings;
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   use Exporter qw(import);
   our @EXPORT = qw(
     tell_output
@@ -36,7 +36,7 @@ package Rails::Assets::Output {
 
 =head1 NAME
 
-Rails::Assets::Output - Output functions for verbose and output mode
+Rails::Assets::Output - Output Functions for Rails::Assets
 
 =head1 VERSION
 
@@ -56,6 +56,8 @@ Version 0.02
 
 =head2 tell_output
 
+This function print the content of the analysis on STDOUT
+
 =head1 SUBROUTINES/METHODS
 
 =head1 AUTHOR
@@ -64,9 +66,11 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-. at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=.>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+Pull Requests, Issues, Stars and Forks on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage> are welcome!
 
 =head1 SUPPORT
 
