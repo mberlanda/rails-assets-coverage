@@ -7,7 +7,7 @@ package Rails::Assets {
   use Rails::Assets::Processor;
   use Clone qw(clone);
 
-  our $VERSION = '0.01';
+  our $VERSION = '0.02';
   our $TEMPLATE_DIR = [qw( app/views/)];
   our $TEMPLATE_EXT = [qw(.haml .erb)];
   our $ASSETS_DIR = [qw( app/assets/ public/ vendor/assets/ )];
@@ -68,7 +68,7 @@ package Rails::Assets {
 }
 =head1 NAME
 
-Rails::Assets - provides some utilities functions for Assets detection in a Rails project.
+Rails::Assets - Class for Rails Projects Assets Analysis.
 
 =head1 VERSION
 
@@ -76,7 +76,7 @@ Version 0.02
 
 =head1 SYNOPSIS
 
-This module an object for parsing Assets directories
+This module provides an object for parsing Assets directories
 
     use Rails::Assets;
 
@@ -90,28 +90,125 @@ This module an object for parsing Assets directories
     $assets->analyse();
     ...
 
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+You can find a sample script in the project L<github repository|https://github.com/mberlanda/rails-assets-coverage>
 
 =head1 SUBROUTINES/METHODS
 
 =head2 new
-The constructor takes no argument for now. Later it would be interesting to add additional paths
-and extensions. This would require some validation and it might have some side effects
+
+The constructor takes no argument for now. It would be interesting to add additional paths
+and extensions in the future. This would require some validation and it could be quite tricky.
+
+    use Rails::Assets;
+
+    my $assets = Rails::Assets->new();
+
+At the current state, you can modify the defaults as follows:
+
+    #!usr/bin/perl -t
+
+    use strict;
+    use warnings;
+    use Test::More tests => 3;
+    use Test::Deep;
+    use Rails::Assets;
+
+    DEFAULT: {
+      my $default_dir = [qw( app/views/ )];
+      is_deeply($Rails::Assets::TEMPLATE_DIR, $default_dir,
+        '$Rails::Assets::TEMPLATE_DIR has the expected default'
+      );
+
+      my $assets = Rails::Assets->new;
+      is_deeply($assets->template_dir, $default_dir,
+        'Rails::Assets instance has default template_dir()'
+      );
+    }
+
+    CUSTOM: {
+      push @$Rails::Assets::TEMPLATE_DIR, 'app/folder/';
+      my $expected_dir = [qw( app/views/ app/folder/ )];
+
+      my $assets = Rails::Assets->new;
+      is_deeply($assets->template_dir, $expected_dir,
+        'Rails::Assets instance template_dir() changes according to $Rails::Assets::TEMPLATE_DIR');
+    }
 
 =head2 template_dir
+
+Getter for template directories. It is a copy of C<$Rails::Assets::TEMPLATE_DIR> reference
+
+    my $template_directories = [qw( app/views/)];
+    is_deeply( $Rails::Assets::TEMPLATE_DIR, $template_directories);
+    is_deeply( $assets->template_dir(), $template_directories);
+
 =head2 template_ext
+
+Getter for template extensions. It is a copy of C<$Rails::Assets::TEMPLATE_EXT> reference
+
+    my $template_extensions = [qw(.haml .erb)];
+    is_deeply( $Rails::Assets::TEMPLATE_EXT, $template_extensions);
+    is_deeply( $assets->template_ext(), $template_extensions);
+
 =head2 assets_dir
+
+Getter for assets directions. It is a copy of C<$Rails::Assets::ASSETS_DIR> reference
+
+    my $assets_directories = [qw( app/assets/ public/ vendor/assets/ )];
+    is_deeply( $Rails::Assets::ASSETS_DIR, $assets_directories);
+    is_deeply( $assets->assets_dir(), $assets_directories);
+
 =head2 assets_ext
+
+Getter for assets extensions. It is a copy of C<$Rails::Assets::ASSETS_EXT> reference
+
+    my $assets_extensions = {
+      fonts => [qw(.woff2 .woff .ttf .eot .otf)],
+      images => [qw(.png .jpg .gif .svg .ico)],
+      javascripts => [qw(.js .map)],
+      stylesheets => [qw(.css .scss)],
+    };
+    is_deeply( $Rails::Assets::ASSETS_EXT, $assets_extensions);
+    is_deeply( $assets->assets_ext(), $assets_extensions);
+
 =head2 assets_hash
+
+C<undef> by default. Hash reference initialized by C<$assets->analyse()> with keys fonts, images, javascripts, stylesheets
+
 =head2 template_hash
+
+see L<assets_hash|"#assets_hash">
+
 =head2 scss_hash
+
+see L<assets_hash|"#assets_hash">
+
 =head2 map_hash
+
+see L<assets_hash|"#assets_hash">
+
 =head2 assets_paths
+
+C<undef> by default. Array reference containing C<$Rails::Assets::ASSETS_DIR> and their and their subfolders named as assets_hash keys
+
+    my $expected_paths = [qw(
+      app/assets/fonts/ app/assets/javascripts/ app/assets/stylesheets/ app/assets/ public/
+      vendor/assets/fonts/ vendor/assets/javascripts/ vendor/assets/stylesheets/ vendor/assets/
+    )];
+    is_deeply($assets->assets_paths(), $expected_paths);
+
 =head2 reversed_ext
+
+C<undef> by default.  Hash reference created reversing key value of C<assets_hash>
+
+    is_deeply(
+      [sort keys %{$assets->reversed_ext()}],
+      [sort map {@$_} values %{$assets->assets_ext()}]
+    );
+
 =head2 analyse
+
+Method that perform analysis. It populate all the references above
 
 =head1 AUTHOR
 
@@ -122,6 +219,8 @@ Mauro Berlanda, C<< <kupta at cpan.org> >>
 Please report any bugs or feature requests to C<bug-rails-assets at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Rails-Assets>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
+
+You can even open pull requests and issues on the project L<github repository|https://github.com/mberlanda/rails-assets-coverage>
 
 =head1 SUPPORT
 
