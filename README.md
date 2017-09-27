@@ -1,22 +1,15 @@
 # Rails Assets Coverage
 
-The purpose of this script is to find which assets are used by a Rails app.
-I tried to not use any dependency in order to make it runnable on every UNIX machine without installing perl package manager.
-This should be intended as a proof of concept for a future ruby gem:
+[![Build Status](https://travis-ci.org/mberlanda/rails-assets-coverage.svg?branch=master)](https://travis-ci.org/mberlanda/rails-assets-coverage)
+
+The purpose of this package is to find which assets are used by a Rails app.
+This project was initially intended as a proof of concept for a future ruby gem, but it became a perfectly working perl package published on CPAN:
+
+[http://search.cpan.org/~kupta/Rails-Assets-0.02/](http://search.cpan.org/~kupta/Rails-Assets-0.02/)
 
 ### Demos
 
 If you don't have cpanminus installed and you want to run some demos, please refer to the `demos` branch.
-
-```
-  # Ubuntu
-  $ [VERBOSE=1|OUTPUT=1|] demo/rails_assets_ubuntu [RAILS_ROOT|.]
-  # Windows: cmd prompt
-  set VERBOSE=1
-  echo %VERBOSE% # if you want to check
-  set VERBOSE= #unset the variable with no spaces after = sign
-  demo/rails_assets_win.exe [RAILS_ROOT]
-```
 
 ### Usage
 
